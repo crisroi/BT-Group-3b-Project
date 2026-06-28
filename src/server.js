@@ -1,11 +1,13 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import expenseRoute from "./routes/expenseRoute.js"
 
+dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-dotenv.config();
+app.use("/api/expenses", expenseRoute)
 
 const PORT = process.env.PORT || 5000;
 

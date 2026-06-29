@@ -1,15 +1,15 @@
 import express from 'express';
 import dotenv from 'dotenv';
-
+import expenseRoute from "./routes/expenseRoute.js"
+dotenv.config();
 
 const app = express();
 app.use(express.json());
-
-dotenv.config();
+app.use("/api/add", expenseRoute);
 
 const PORT = process.env.PORT || 5000;
 
-let expenses = [
+export const expenses = [
     {
         id: 1,
         amount: 2000,
@@ -33,6 +33,8 @@ const categories = ['Food', 'Entertainment', 'Transportation', 'Utilities', 'Hea
 app.get('/health', (req, res) => {
   res.send('Server is running!');
 });
+
+
 
 
 app.listen(PORT, () => console.log(`Server on port ${PORT}`));

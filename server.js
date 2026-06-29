@@ -34,5 +34,52 @@ app.get('/health', (req, res) => {
   res.send('Server is running!');
 });
 
+app.put('/update/:id', (req, res) => {
+    const id = Number(req.params.id);
+    const expense = expenses.find(exp => exp.id === id);
 
+    if (!expense) {
+        return res.status(404).json({
+            message: 'Expense not found'
+        });
+    }
+
+    const { amount, description, category } = req.body;
+
+    if (category && !categories.includes(category)) {
+        return res.status(400).json({
+            message: 'Invalid category'
+        });
+    }
+
+    expense.amount = amount ?? expense.amount;
+    expense.description = description ?? expense.description;
+    expense.category = category ?? expense.category;
+    expense.updatedAt = new Date();
+
+    res.status(200).json({
+        message: 'Expense updated successfully',
+        expense
+    });
+});
+
+
+
+app.delete('/delete/:id', (req, res) => {
+    const id = Number(req.params.id);
+
+    const expense = expenses.find(exp => exp.id === id);
+
+    if (!expense) {
+        return res.status(404).json({
+            message: 'Expense not found'
+        });
+    }
+
+    expenses = expenses.filter(exp => exp.id !== id);
+
+    res.status(200).json({
+        message: 'Expense deleted successfully'
+    });
+});
 app.listen(PORT, () => console.log(`Server on port ${PORT}`));

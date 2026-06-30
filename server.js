@@ -81,4 +81,23 @@ app.delete('/delete/:id', (req, res) => {
         message: 'Expense deleted successfully'
     });
 });
+
+
+app.delete('/delete/category/:category', (req, res) => {
+    const category = req.params.category;
+    const deletedCount = expenses.filter(expense => expense.category.toLowerCase() === category.toLowerCase()).length;
+
+if (deletedCount === 0) {
+    return res.status(404).json({
+        message: `No expenses found in '${category}' category .`
+    });
+}
+
+expenses = expenses.filter(expense => expense.category.toLowerCase() !== category.toLowerCase());
+
+res.status(200).json({
+    message: `All expenses in '${category}' category deleted successfully`,deletedCount});
+
+});
+
 app.listen(PORT, () => console.log(`Server on port ${PORT}`));

@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import expenseRoute from "./routes/expenseRoute.js"
+// import expenseRoute from "./routes/expenseRoute.js"
 dotenv.config();
 
 // Initialize Express app
@@ -8,7 +8,7 @@ const app = express();
 // Middleware to parse JSON request bodies
 app.use(express.json());
 // Use the expense route for handling expense-related requests
-app.use("/api/add", expenseRoute);
+// app.use("/api/add", expenseRoute);
 
 // Set the port from environment variable or default to 5000
 const PORT = process.env.PORT || 5000;
@@ -41,7 +41,7 @@ app.get('/health', (req, res) => {
 });
 
 // Get all expenses
-app.get('/expenses', (req, res) => {
+app.get('/expenses/list', (req, res) => {
     res.status(200).json({
         expenses
     });
@@ -69,6 +69,7 @@ app.get('/categories', (req, res) => {
         categories
     });
 });
+
 // Get expenses by category
 app.get('/expenses/category/:category', (req, res) => {
     const category = req.params.category;
@@ -78,8 +79,34 @@ app.get('/expenses/category/:category', (req, res) => {
     });
 });
 
+// Add a new expense
+app.post('/expenses/add', (req, res) => {
+    const { amount, description, category } = req.body;
+    if (!description) {
+        return res.status(400).json({ success: false, message: "Description is required" });
+    }
+    if (!amount || isNaN(amount) || amount <= 0){
+        return res.status(400).json({ success: false, message: "Enter a valid amount greater than 0" });
+    }
+    if (!category || !categories.includes(category)) {
+        return res.status(400).json({ success: false, message: `Enter a valid category from ${categories.join(', ')}` });
+    }
+
+    const expenditure = {
+        id: expenses.length+1,
+        amount,
+        description,
+        category,
+        createdAt: new Date(),
+    };
+
+    expenses.push(expenditure);
+
+    return res.status(201).json({ success: true, message: "Expense created successfully", data: expenditure });
+});
+
 // Update an expense by ID
-app.put('/update/:id', (req, res) => {
+app.put('/expenses/update/:id', (req, res) => {
     const id = Number(req.params.id);
     const expense = expenses.find(exp => exp.id === id);
 
@@ -109,7 +136,7 @@ app.put('/update/:id', (req, res) => {
 });
 
 // Delete an expense by ID
-app.delete('/delete/:id', (req, res) => {
+app.delete('/expenses/delete/:id', (req, res) => {
     const id = Number(req.params.id);
 
     const expense = expenses.find(exp => exp.id === id);
@@ -128,7 +155,7 @@ app.delete('/delete/:id', (req, res) => {
 });
 
 // Delete all expenses in a specific category
-app.delete('/delete/category/:category', (req, res) => {
+app.delete('/expenses/delete/category/:category', (req, res) => {
     const category = req.params.category;
     const deletedCount = expenses.filter(expense => expense.category.toLowerCase() === category.toLowerCase()).length;
 

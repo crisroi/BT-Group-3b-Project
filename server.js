@@ -48,7 +48,7 @@ app.get('/expenses/list', (req, res) => {
 });
 
 // Get an expense by ID
-app.get('/expenses/:id', (req, res) => {
+app.get('/expenses/list/:id', (req, res) => {
     const id = Number(req.params.id);
     const expense = expenses.find(exp => exp.id === id);        
 
@@ -71,7 +71,7 @@ app.get('/categories', (req, res) => {
 });
 
 // Get expenses by category
-app.get('/expenses/category/:category', (req, res) => {
+app.get('/expenses/list/category/:category', (req, res) => {
     const category = req.params.category;
     const filteredExpenses = expenses.filter(expense => expense.category.toLowerCase() === category.toLowerCase());
     res.status(200).json({
@@ -124,6 +124,18 @@ app.put('/expenses/update/:id', (req, res) => {
         });
     }
 
+    if(amount && (isNaN(amount) || amount <= 0)) {
+        return res.status(400).json({
+            message: 'Invalid amount'
+        });
+    }
+
+    if(description && description.trim() === '') {
+        return res.status(400).json({
+            message: 'Description cannot be empty'
+        });
+    }
+
     expense.amount = amount ?? expense.amount;
     expense.description = description ?? expense.description;
     expense.category = category ?? expense.category;
@@ -131,7 +143,7 @@ app.put('/expenses/update/:id', (req, res) => {
 
     res.status(200).json({
         message: 'Expense updated successfully',
-        expense
+        expense: expense
     });
 });
 
@@ -168,7 +180,7 @@ if (deletedCount === 0) {
 expenses = expenses.filter(expense => expense.category.toLowerCase() !== category.toLowerCase());
 
 res.status(200).json({
-    message: `All expenses in '${category}' category deleted successfully`,deletedCount});
+    message: `All expenses in '${category}' category deleted successfully`, deletedCount });
 
 });
 

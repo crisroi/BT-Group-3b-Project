@@ -15,13 +15,7 @@ const PORT = process.env.PORT || 5000;
 
 // Sample expenses data
 let expenses = [
-    {
-        id: 1,
-        amount: 2000,
-        description: 'Family dinner',
-        category: 'Food',
-        createdAt: new Date(),
-    },
+   h,
     {
         id: 2,
         amount: 1500,

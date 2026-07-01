@@ -14,7 +14,7 @@ app.use(express.json());
 const PORT = process.env.PORT || 5000;
 
 // Sample expenses data
-export const expenses = [
+export let expenses = [
     {
         id: 1,
         amount: 2000,
